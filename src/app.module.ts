@@ -1,10 +1,38 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { GlobalConfigModule } from './global/config/config.module';
+import { GlobalModule } from './global/GlobalModule';
+import { ServiceModule } from './domain/service/ServiceModule';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+    imports: [
+        GlobalConfigModule, // 글로벌 ConfigModule 한 번만 등록
+        TypeOrmModule.forRootAsync({
+            imports: [GlobalConfigModule],
+            useFactory: () => ({
+                type: 'mysql',
+                driver: require('mysql2'),
+                host: process.env.DB_HOST,
+                port: parseInt(process.env.DB_PORT || '3306'),
+                username: process.env.DB_USERNAME,
+                password: process.env.DB_PASSWORD,
+                database: process.env.DB_DATABASE,
+                entities: [
+
+                ],
+                synchronize: process.env.NODE_ENV !== 'production',
+                logging: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+                maxQueryExecutionTime: 1000,
+                ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+                extra: {
+                    connectionLimit: 10,
+                    acquireTimeout: 60000,
+                    timeout: 60000,
+                },
+            }),
+        }),
+        GlobalModule,
+        ServiceModule,
+    ],
 })
 export class AppModule {}

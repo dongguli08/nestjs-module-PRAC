@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { GlobalConfigModule } from './global/config/config.module';
-import { GlobalModule } from './global/GlobalModule';
-import { ServiceModule } from './domain/service/ServiceModule';
+import {GlobalConfigModule} from "./global/config/Config.module";
+
 
 @Module({
     imports: [
@@ -31,8 +30,7 @@ import { ServiceModule } from './domain/service/ServiceModule';
                 },
             }),
         }),
-        GlobalModule,
-        ServiceModule,
+
     ],
 })
 export class AppModule {}

@@ -1,6 +1,7 @@
 // src/global/config/config.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ConfigModule as NestConfigModule } from '@nestjs/config';
 import configuration from './configuration';
 
 @Module({
@@ -10,5 +11,6 @@ import configuration from './configuration';
             load: [configuration], // configuration.ts 로드
         }),
     ],
+    exports: [NestConfigModule],
 })
 export class GlobalConfigModule {}

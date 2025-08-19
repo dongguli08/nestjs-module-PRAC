@@ -1,10 +1,10 @@
-// src/global/config/configuration.ts
 export default () => ({
     database: {
         host: process.env.DB_HOST,
-    },
-    custom: {
-        value: process.env.CUSTOM_VALUE || 'defaultValue',
+        port: parseInt(process.env.DB_PORT || '3306', 10),
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        name: process.env.DB_NAME,
     },
     api: {
         key: process.env.API_KEY,

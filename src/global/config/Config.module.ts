@@ -1,16 +1,19 @@
 // src/global/config/config.module.ts
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { ConfigModule as NestConfigModule } from '@nestjs/config';
+import { Global, Module } from '@nestjs/common';
+import {ConfigModule as NestConfigModule} from '@nestjs/config';
 import configuration from './configuration';
+import {ConfigService} from "./Config.service";
 
+
+@Global()
 @Module({
     imports: [
-        ConfigModule.forRoot({
-            isGlobal: true, // 글로벌로 선언: AppModule에서 import 없이 사용 가능
+        NestConfigModule.forRoot({
+            isGlobal: true, // 글로벌 설정
             load: [configuration], // configuration.ts 로드
         }),
     ],
-    exports: [NestConfigModule],
+    providers: [ConfigService], // 커스텀 ConfigService 제공
+    exports: [ConfigService],   // 다른 모듈에서 바로 사용 가능
 })
 export class GlobalConfigModule {}

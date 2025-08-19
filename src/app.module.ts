@@ -1,24 +1,24 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {GlobalConfigModule} from "./global/config/Config.module";
+import {ConfigService} from "./global/config/Config.service";
 
 
 @Module({
     imports: [
-        GlobalConfigModule, // 글로벌 ConfigModule 한 번만 등록
+        GlobalConfigModule, // 글로벌 ConfigModule 등록
         TypeOrmModule.forRootAsync({
             imports: [GlobalConfigModule],
-            useFactory: () => ({
+            inject: [ConfigService], // 커스텀 ConfigService 주입
+            useFactory: (configService: ConfigService) => ({
                 type: 'mysql',
                 driver: require('mysql2'),
-                host: process.env.DB_HOST,
-                port: parseInt(process.env.DB_PORT || '3306'),
-                username: process.env.DB_USERNAME,
-                password: process.env.DB_PASSWORD,
-                database: process.env.DB_DATABASE,
-                entities: [
-
-                ],
+                host: configService.getDatabaseHost(),
+                port: configService.getDatabasePort(),
+                username: configService.getDatabaseUsername(),
+                password: configService.getDatabasePassword(),
+                database: configService.getDatabaseName(),
+                entities: [],
                 synchronize: process.env.NODE_ENV !== 'production',
                 logging: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
                 maxQueryExecutionTime: 1000,
@@ -30,7 +30,6 @@ import {GlobalConfigModule} from "./global/config/Config.module";
                 },
             }),
         }),
-
     ],
 })
 export class AppModule {}

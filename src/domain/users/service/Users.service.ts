@@ -21,7 +21,7 @@ export class UserService {
     }
 
     // 모든 사용자 조회
-    findAllUsers(): Promise<UserEntity[]> {
+    async findAllUsers(): Promise<UserEntity[]> {
         return this.userRepository.find();
     }
 
@@ -35,7 +35,7 @@ export class UserService {
     }
 
     // 사용자 생성
-    createUser(name: string, email: string): Promise<UserEntity> {
+    async createUser(name: string, email: string): Promise<UserEntity> {
         const user = this.userRepository.create({ name, email });
         return this.userRepository.save(user);
     }
@@ -46,7 +46,7 @@ export class UserService {
     }
 
     // 전체 대출 기록 조회
-    findAllLoans(): Promise<LoanEntity[]> {
+    async findAllLoans(): Promise<LoanEntity[]> {
         return this.loanRepository.find({ relations: ['user', 'book'] });
     }
 }

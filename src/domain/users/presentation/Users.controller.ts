@@ -1,7 +1,8 @@
-import {Body, Controller, Get, Param, Post, Req, ValidationPipe} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Post, Req, ValidationPipe} from "@nestjs/common";
 import {UserService} from "../service/Users.service";
 import {UserEntity} from "../entity/Users.entity";
 import {CreateUserDto} from "./dto/request/CreateUser.dto";
+import {LoginUserDto} from "./dto/request/LoginUser.dto";
 
 
 
@@ -17,13 +18,13 @@ export class UsersController {
 
     // 전체 유저 조회
     @Get()
-    findAll(): Promise<UserEntity[]> {
+    async findAll(): Promise<UserEntity[]> {
         return this.userService.findAllUsers();
     }
 
     // 단일 유저 조회
     @Get(':id')
-    findOne(@Param('id') id: number): Promise<UserEntity> {
+    async findOne(@Param('id') id: number): Promise<UserEntity> {
         return this.userService.findOneUser(id);
     }
 
@@ -34,4 +35,15 @@ export class UsersController {
     ): Promise<UserEntity> {
         return this.userService.createUser(data);
     }
+
+    //로그인
+    @Post('/login')
+    async login(
+        @Body(new ValidationPipe()) data:LoginUserDto,
+    ):Promise<UserEntity>{
+        return this.userService.loginUser(data)
+    }
+
+    //삭제
+    @Delete()
 }

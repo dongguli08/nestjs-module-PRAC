@@ -17,19 +17,19 @@ export class UsersController {
 
     // 전체 유저 조회
     @Get()
-    findAllUsers(): Promise<UserEntity[]> {
+    findAll(): Promise<UserEntity[]> {
         return this.userService.findAllUsers();
     }
 
     // 단일 유저 조회
     @Get(':id')
-    findOneUser(@Param('id') id: number): Promise<UserEntity> {
+    findOne(@Param('id') id: number): Promise<UserEntity> {
         return this.userService.findOneUser(id);
     }
 
     // 회원가입
     @Post('/register')
-    async createUser(
+    async register(
         @Body(new ValidationPipe()) data: CreateUserDto,
     ): Promise<UserEntity> {
         return this.userService.createUser(data);

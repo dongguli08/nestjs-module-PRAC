@@ -40,9 +40,7 @@ export class UsersController {
 
     //로그인
     @Post('/login')
-    async login(
-        @Body(new ValidationPipe()) data:LoginUserDto,
-    ):Promise<UserEntity>{
+    async login(@Body(new ValidationPipe()) data:LoginUserDto,):Promise<UserEntity>{
         return this.userService.loginUser(data)
     }
 

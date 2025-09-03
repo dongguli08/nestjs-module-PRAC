@@ -6,12 +6,13 @@ import {BookEntity} from "../../books/entity/Books.entity";
 
 @Entity('loans')
 export class LoanEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
+    //하나의 대출(Loan)은 **하나의 사용자(User)**에 속함 + 하나의 사용자는 여러 대출(Loan[])을 가질 수 있음
     @ManyToOne(() => UserEntity, (user) => user.loans, { eager: true })
     user: UserEntity;
-
+    //하나의 책은 여러 대출을 가질수 있음
     @ManyToOne(() => BookEntity, (book) => book.loans, { eager: true })
     book: BookEntity;
 

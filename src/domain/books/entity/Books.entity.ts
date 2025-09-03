@@ -18,4 +18,12 @@ export class BookEntity {
 
     @OneToMany(() => LoanEntity, (loan) => loan.book)
     loans: LoanEntity[];
+
+    async save(book: any) {
+
+    }
+
+    async findOne(param: { where: { id: string } }) {
+
+    }
 }

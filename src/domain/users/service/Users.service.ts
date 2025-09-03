@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
+import {HttpStatus, Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
 import {ConfigService} from "../../../global/config/Config.service";
 import { UserEntity } from '../entity/Users.entity';
 import { LoanEntity } from '../../loan/entity/Loan.entity';
@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import {CreateUserDto} from "../presentation/dto/request/CreateUser.dto";
 import {LoginUserDto} from "../presentation/dto/request/LoginUser.dto";
 import { hash, compare } from 'bcrypt';
+import {UpdateUserDto} from "../presentation/dto/request/Update.User.dto";
 
 
 
@@ -31,7 +32,7 @@ export class UserService {
     }
 
     // 단일 사용자 조회
-    async findOneUser(id: number): Promise<UserEntity> {
+    async findOneUser(id: string): Promise<UserEntity> {
         const user = await this.userRepository.findOne({ where: { id } });
         if (!user) {
             throw new NotFoundException(`User with id ${id} not found`);
@@ -61,13 +62,34 @@ export class UserService {
     }
 
     // 사용자 삭제
-    async deleteUser(id: number): Promise<void> {
-        await this.userRepository.delete(id);
+    async deleteUser(id: string): Promise<any> {
+        try{
+            const user = await this.userRepository.findOne({ where: { id } });
+            if(!user){
+                throw new NotFoundException(`User with id ${id} not found`);
+            }
+            await this.userRepository.delete(id);
+            return { message: `UserID : ${id} has been deleted successfully.`, statusCode: HttpStatus.OK };
+        }catch (error){
+            console.error('Error deleting user:', error);
+            throw error;
+        }
     }
+    async updateUser(id: string, data: UpdateUserDto) {
+        const user = await this.userRepository.findOne({ where: { id } });
 
-    // 전체 대출 기록 조회
-    async findAllLoans(): Promise<LoanEntity[]> {
-        return this.loanRepository.find({ relations: ['user', 'book'] });
+        if (!user) {
+            throw new NotFoundException(`User with id ${id} not found`);
+        }
+
+        const updatedData= {
+            name: data.name ?? user.name,
+            email: data.email ?? user.email
+        }
+        await this.userRepository.update(user.id, updatedData);
+
+        return await this.userRepository.findOne({ where: { id } });
+
     }
 
     async encryptPassword(password: string) {

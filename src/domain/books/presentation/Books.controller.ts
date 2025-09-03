@@ -1,9 +1,13 @@
-import {Controller} from "@nestjs/common";
+import {Controller, Post} from "@nestjs/common";
 
 
 @Controller("books")
 export class BooksController{
-    constructor(private readonly bookService: BookService) {}
+    constructor(private readonly bookService: BookService) {
 
+    }
+
+    @Post('create')
+    async addBook
 
 }

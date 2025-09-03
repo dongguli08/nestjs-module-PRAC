@@ -1,9 +1,10 @@
-import {BadRequestException, Injectable} from "@nestjs/common";
+import {BadRequestException, HttpStatus, Injectable, NotFoundException} from "@nestjs/common";
 import {ConfigService} from "../../../global/config/Config.service";
 import {InjectRepository} from "@nestjs/typeorm";
 import {BookEntity} from "../entity/Books.entity";
 import {Repository} from "typeorm";
 import {CreateBookDto} from "../presentation/dto/req/Add.Book.dto";
+import {UpdateBookDto} from "../presentation/dto/req/Update.Book.dto";
 
 
 @Injectable()
@@ -19,17 +20,39 @@ export class BooksService {
     }
 
     async findOne(id: string): Promise<BookEntity>{
-        const user = await this.bookRepository.findOne({where:{id}})
-        if(!user){
-            throw new BadRequestException("User not found");
+        const book = await this.bookRepository.findOne({where:{id}})
+        if(!book){
+            throw new BadRequestException("Book not found");
         }
-        return user;
+        return book;
     }
 
-    async createBook(createBookDto: CreateBookDto): Promise<BookEntity>{
-        const {title, author,stock} = createBookDto;
+    async createBooks(data: CreateBookDto): Promise<BookEntity>{
+        const {title, author,stock} = data;
         const book = this.bookRepository.create({title, author, stock});
         return this.bookRepository.save(book);
     }
 
+
+    async updateBooks(id: string, data: UpdateBookDto): Promise<BookEntity>{
+        const book = await this.bookRepository.findOne({where:{id}});
+        if(!book){
+            throw new NotFoundException("Book not found");
+        }
+        const updateData = {
+            title: data.title ?? book?.title,
+            author: data.author ?? book?.author,
+        }
+        await this.bookRepository.save(updateData);
+        return this.bookRepository.save(book);
+    }
+
+    async deleteBook(id: string){
+        const book = await this.bookRepository.findOne({where:{id}});
+        if(!book){
+            throw new NotFoundException("Book not found");
+        }
+        await this.bookRepository.delete(id);
+        return { message: `BookId : ${id} has been deleted successfully.`, statusCode: HttpStatus.OK };
+    }
 }

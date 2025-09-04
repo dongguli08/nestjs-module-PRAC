@@ -80,7 +80,7 @@ export class LoanService {
 
     async findAllLoans(): Promise<LoanEntity[]> {
         // relations 옵션을 사용하면 eager 옵션 없이도 User와 Book 정보를 함께 가져올 수 있음
-        return this.loanRepository.find({ relations: ['user', 'book'] });
+        return this.loanRepository.find({ relations: ['user', 'book'] }); //여러개 찾기 find
     }
 
 
@@ -92,15 +92,34 @@ export class LoanService {
         return loan;
     }
 
-    
+ //유저의 대출 결과
     async findByUser(userId: string): Promise<LoanEntity[]> {
-        return this.loanRepository.find({
+        const loans = await this.loanRepository.find({ //findone은 한개를 가져오고 find는 여러개를 배열로
             where: {
-                user: { id: userId },   // UserEntity와 relation 걸려 있으니 user.id로 접근
+                user: { id: userId }, // LoanEntity.user.id로 필터링
             },
-            relations: ['user', 'book'], // 대출 내역에서 사용자와 책 정보 같이 가져오기
+            relations: ['user', 'book'], // 관계된 user, book 같이 조회
         });
+
+        if (loans.length === 0) {
+            throw new NotFoundException(`No loan records found for userId: ${userId}`);
+        }
+
+        return loans;
     }
+
+
+//책의 대출 결과
+    async findByBookId(bookId: string): Promise<LoanEntity[]> {
+        const book =  await this.loanRepository.find({
+            where: { book: { id: bookId } },  // BookEntity.id 기준으로 검색
+        });
+        if (book.length == 0) {
+            throw new NotFoundException(`Book with id ${bookId} not found`);
+        }
+        return book;
+    }
+
 
 }
 

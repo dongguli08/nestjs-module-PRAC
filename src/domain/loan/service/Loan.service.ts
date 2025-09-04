@@ -82,5 +82,25 @@ export class LoanService {
         // relations 옵션을 사용하면 eager 옵션 없이도 User와 Book 정보를 함께 가져올 수 있음
         return this.loanRepository.find({ relations: ['user', 'book'] });
     }
+
+
+    async findByID(id: string): Promise<LoanEntity> {
+        const loan = await this.loanRepository.findOne({ where: { id } });
+        if (!loan) {
+            throw new NotFoundException(`Id ${id} not found`);
+        }
+        return loan;
+    }
+
+    
+    async findByUser(userId: string): Promise<LoanEntity[]> {
+        return this.loanRepository.find({
+            where: {
+                user: { id: userId },   // UserEntity와 relation 걸려 있으니 user.id로 접근
+            },
+            relations: ['user', 'book'], // 대출 내역에서 사용자와 책 정보 같이 가져오기
+        });
+    }
+
 }
 

@@ -20,12 +20,12 @@ export class LoanController {
 
     @Get()
     async getAllLoans() {
-        return this.loanService.findAll();
+        return this.loanService.findAllLoans();
     }
 
     @Get(':id')
     async getLoanById(@Param('id') id: string) {
-        return this.loanService.findById(id);
+        return this.loanService.findByID(id);
     }
 
     @Get('users/:userId')

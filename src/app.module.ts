@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {GlobalConfigModule} from "./global/config/Config.module";
 import {ConfigService} from "./global/config/Config.service";
+import {UserEntity} from "./domain/users/entity/Users.entity";
+import {BookEntity} from "./domain/books/entity/Books.entity";
+import {LoanEntity} from "./domain/loan/entity/Loan.entity";
 
 
 @Module({
@@ -18,8 +21,8 @@ import {ConfigService} from "./global/config/Config.service";
                 username: configService.getDatabaseUsername(),
                 password: configService.getDatabasePassword(),
                 database: configService.getDatabaseName(),
-                entities: [],
-                synchronize: process.env.NODE_ENV !== 'production',
+                entities: [UserEntity, BookEntity, LoanEntity],
+                synchronize: true, // 개발환경에서만 true
                 logging: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
                 maxQueryExecutionTime: 1000,
                 ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,

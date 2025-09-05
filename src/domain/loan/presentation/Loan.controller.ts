@@ -35,6 +35,6 @@ export class LoanController {
 
     @Get('books/:bookId')
     async getBookLoans(@Param('bookId') bookId: string) {
-        return this.loanService.findByBook(bookId);
+        return this.loanService.findByBookId(bookId);
     }
 }

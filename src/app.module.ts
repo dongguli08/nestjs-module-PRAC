@@ -25,8 +25,7 @@ import {ConfigService} from "./global/config/Config.service";
                 ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
                 extra: {
                     connectionLimit: 10,
-                    acquireTimeout: 60000,
-                    timeout: 60000,
+                    connectTimeout: 60000, // 올바른 옵션
                 },
             }),
         }),
